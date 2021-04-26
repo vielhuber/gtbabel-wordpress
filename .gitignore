@@ -1,0 +1,11 @@
+composer.lock
+.env
+log.txt
+/locales/*
+/vendor
+/vendor/
+/close2.zip
+/close2translate.zip
+gtbabel-*-log.txt
+*.js.map
+*.tmp-browserify*
