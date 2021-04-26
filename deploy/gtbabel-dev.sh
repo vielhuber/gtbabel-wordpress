@@ -4,7 +4,7 @@ if [[ ( -n "$1" ) && ( $1 == "start" ) ]]; then
     if [ ! -d "./../../plugins/gtbabel_tmp" ]; then
         echo "starting..."
         mv ./../../plugins/gtbabel ./../../plugins/gtbabel_tmp
-        ln -s /var/www/gtbabel/gtbabel-old/wordpress ./../../plugins/gtbabel
+        ln -s /var/www/gtbabel/gtbabel-wp ./../../plugins/gtbabel
     else
         echo "stop first!"
     fi
