@@ -6,9 +6,9 @@ Official WordPress plugin repository that can be used to build the free and pro 
 
 ### Setup
 
--   Clone [gtbabel-core](https://github.com/gtbabel/gtbabel-core) in /gtbabel/gtbabel-core
--   Clone [gtbabel-wp](https://github.com/gtbabel/gtbabel-wp) in /gtbabel/gtbabel-wp
--   Create relative symlink from /gtbabel/gtbabel-wp/vendor to /gtbabel/gtbabel-core/vendor with `ln -s ./../gtbabel-core/vendor ./vendor`
+-   Clone [gtbabel-core](https://github.com/gtbabel/gtbabel-core) into `/gtbabel/gtbabel-core`
+-   Clone [gtbabel-wp](https://github.com/gtbabel/gtbabel-wp) into `/gtbabel/gtbabel-wp`
+-   Inside `/gtbabel/gtbabel-wp`, create a relative symlink: `ln -s ./../gtbabel-core/vendor ./vendor`
 
 ### Test deployment
 
