@@ -11,3 +11,4 @@ gtbabel-*-log.txt
 *.tmp-browserify*
 /node_modules/
 /package-lock.json
+/deploy/build/
