@@ -9,3 +9,5 @@ log.txt
 gtbabel-*-log.txt
 *.js.map
 *.tmp-browserify*
+/node_modules/
+/package-lock.json
