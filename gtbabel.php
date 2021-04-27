@@ -890,7 +890,10 @@ class GtbabelWordPress
             add_filter(
                 'get_' . $adjacent_link . '_post_where',
                 function ($where) {
-                    $where .= ' AND p.ID NOT IN (' . implode(',', $this->handlePreventLngsGetExcludedIds()) . ')';
+                    $ids = $this->handlePreventLngsGetExcludedIds();
+                    if (!empty($ids)) {
+                        $where .= ' AND p.ID NOT IN (' . implode(',', $ids) . ')';
+                    }
                     return $where;
                 },
                 PHP_INT_MAX
