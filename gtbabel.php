@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Gtbabel
- * Plugin URI: https://github.com/vielhuber/gtbabel
+ * Plugin URI: https://www.gtbabel.com
  * Description: Instant server-side translation of any page.
  * Version: 5.8.2
- * Author: David Vielhuber
- * Author URI: https://vielhuber.de
+ * Author: Gtbabel
+ * Author URI: https://www.gtbabel.com
  * License: free
  */
 if (file_exists(__DIR__ . '/vendor/scoper-autoload.php')) {
@@ -14,7 +14,7 @@ if (file_exists(__DIR__ . '/vendor/scoper-autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
 }
 
-use vielhuber\gtbabel\Gtbabel;
+use gtbabel\gtbabelcore\Gtbabel;
 use vielhuber\stringhelper\__;
 
 class GtbabelWordPress

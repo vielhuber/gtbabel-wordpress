@@ -1,7 +1,7 @@
 === Gtbabel ===
-Contributors: vielhuber
+Contributors: Gtbabel
 Tags: 
-Donate link: https://vielhuber.de
+Donate link: https://www.gtbabel.com
 Requires at least: 5.3.2
 Tested up to: 5.3.2
 Requires PHP: 7.2

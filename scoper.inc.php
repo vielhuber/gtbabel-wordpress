@@ -1036,7 +1036,7 @@ return [
     /*
     'whitelist' => [
         'GtbabelWordPress\*', // all global/native/class based functions in the wordpress plugin class (you must add a namespace "namespace GtbabelWordPress;" inside the file before!)
-        'vielhuber\gtbabel\*', // all global/native/class based functions in the main wordpress class
+        'gtbabel\gtbabelcore\*', // all global/native/class based functions in the main wordpress class
     ],
     'files-whitelist' => [
         'uninstall.php', // the uninstall file

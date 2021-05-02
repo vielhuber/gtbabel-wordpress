@@ -82,7 +82,7 @@ do
     composer install --no-dev
     composer update --no-dev
 
-    # replace name
+    # CHECK: replace name
     if [ "$TYPE" == "PRO" ]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
@@ -92,7 +92,7 @@ do
         msgfmt ./languages/gtbabelpro-plugin-de_DE.po -o ./languages/gtbabelpro-plugin-de_DE.mo
     fi
 
-    # strip out pro code
+    # CHECK: strip out pro code
     if [ "$TYPE" == "FREE" ]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
@@ -130,7 +130,7 @@ do
     cd ./deploy/build
     zip -r ./../"$SLUG".zip ./"$SLUG"
 
-    # make release for free plugin: add to subversion
+    # CHECK: make release for free plugin: add to subversion
     if [[ "$TYPE" == "FREE" && $RELEASE == true ]]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
@@ -155,10 +155,10 @@ do
         cp -r ./../gtbabel/. ./tags/"$v_new"
         svn add ./tags/* --quiet
 
-        svn ci -m "$v_new" --username vielhuber --quiet
+        svn ci -m "$v_new" --username gtbabel --quiet
     fi
 
-    # make release for pro plugin: call api
+    # CHECK: make release for pro plugin: call api
     if [[ "$TYPE" == "PRO" && $RELEASE == true ]]; then
         curl\
             -u api:wZJoc%d@GsfUpIGOw*j*M01O\

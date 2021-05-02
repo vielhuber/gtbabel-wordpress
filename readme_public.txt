@@ -1,7 +1,7 @@
 === Gtbabel ===
-Contributors: vielhuber
+Contributors: Gtbabel
 Tags: bilingual, language, multilingual, translate, translation
-Donate link: https://vielhuber.de
+Donate link: https://www.gtbabel.com
 Requires at least: 5.3.2
 Tested up to: 5.3.2
 Requires PHP: 7.2
@@ -55,7 +55,7 @@ The files are intentionally preserved.
 
 = Can I use Gtbabel without WordPress? =
 
-Yes (see [repository](https://github.com/vielhuber/gtbabel)).
+Yes (see [repository](https://www.gtbabel.com)).
 
 == Screenshots ==
 1. Backend settings
