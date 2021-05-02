@@ -14,7 +14,7 @@ if (file_exists(__DIR__ . '/vendor/scoper-autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
 }
 
-use gtbabel\gtbabelcore\Gtbabel;
+use gtbabel\core\Gtbabel;
 use vielhuber\stringhelper\__;
 
 class GtbabelWordPress
