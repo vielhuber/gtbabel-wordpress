@@ -128,7 +128,7 @@ do
     # make a zip
     cd $SCRIPT_DIR
     cd ./deploy/build
-    zip -r ./../_"$SLUG".zip ./"$SLUG"
+    zip --quiet -r ./../_"$SLUG".zip ./"$SLUG"
 
     # TODO: make release for free plugin: add to subversion
     if [[ "$TYPE" == "FREE" && $RELEASE == true ]]; then
@@ -155,7 +155,7 @@ do
         cp -r ./../gtbabel/. ./tags/"$v_new"
         svn add ./tags/* --quiet
 
-        svn ci -m "$v_new" --username gtbabel --quiet
+        svn ci -m "$v_new" --username gtbabel
     fi
 
     # TODO: make release for pro plugin: call api
