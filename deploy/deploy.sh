@@ -82,21 +82,38 @@ do
     composer install --no-dev
     composer update --no-dev
 
-    # TODO: replace name
+    # replace name
     if [ "$TYPE" == "PRO" ]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
-        find . -type d -name "*" -print0 | xargs -0 rename 's/gtbabel/gtbabelpro/g' {}
-        find . -type f -name "*" -print0 | xargs -0 rename 's/gtbabel/gtbabelpro/g' {}
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabel/gtbabelpro/g'
-        msgfmt ./languages/gtbabelpro-plugin-de_DE.po -o ./languages/gtbabelpro-plugin-de_DE.mo
+
+        # careful
+        mv ./gtbabel.php ./gtbabelpro.php
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/Plugin Name: Gtbabel/Plugin Name: Gtbabel Pro/g'
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/\$name = 'Gtbabel'/\$name = 'Gtbabel Pro'/g"
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'prefix' => 'ScopedGtbabel'/'prefix' => 'ScopedGtbabelPro'/g"
+        msgfmt ./languages/gtbabel-plugin-de_DE.po -o ./languages/gtbabel-plugin-de_DE.mo
+
+        # aggressive
+        #find . -type d -name "*" -print0 | xargs -0 rename 's/Gtbabel/GtbabelPro/g' {}
+        #find . -type d -name "*" -print0 | xargs -0 rename 's/gtbabel/gtbabelpro/g' {}
+        #find . -type f -name "*" -print0 | xargs -0 rename 's/Gtbabel/GtbabelPro/g' {}
+        #find . -type f -name "*" -print0 | xargs -0 rename 's/gtbabel/gtbabelpro/g' {}
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/Gtbabel/GtbabelPro/g'
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabel/gtbabelpro/g'
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabelpro_languagepicker/gtbabel_languagepicker/g'
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabelpro\.com/gtbabel\.com/g'
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'GtbabelPro'/'Gtbabel Pro'/g"
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/"GtbabelPro"/"Gtbabel Pro"/g'
+        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/Plugin Name: GtbabelPro/Plugin Name: Gtbabel Pro/g'
+        #msgfmt ./languages/gtbabelpro-plugin-de_DE.po -o ./languages/gtbabelpro-plugin-de_DE.mo
     fi
 
-    # TODO: strip out pro code
+    # strip out pro code
     if [ "$TYPE" == "FREE" ]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
-        find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINSTRIP \*\//,/\/\* @ENDSTRIP \*\//d'
+        find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
     fi
 
     # do the prefixing with php-scoper
@@ -130,7 +147,7 @@ do
     cd ./deploy/build
     zip --quiet -r ./../_"$SLUG".zip ./"$SLUG"
 
-    # TODO: make release for free plugin: add to subversion
+    # make release for free plugin: add to subversion
     if [[ "$TYPE" == "FREE" && $RELEASE == true ]]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
