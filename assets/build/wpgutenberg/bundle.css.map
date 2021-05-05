@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bundle.css",
+	"sources": [
+		"../../../components/wpgutenberg/style.scss",
+		"../../../components/wpgutenberg/WpGutenberg.scss"
+	],
+	"names": [],
+	"mappings": "ACAA,AAAA,UAAU,CAAC,SAAS,CAAC;EACjB,MAAM,EAAE,YAAY,GACvB"
+}

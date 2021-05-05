@@ -1029,6 +1029,7 @@ class GtbabelWordPress
                 'wp-hooks',
                 'wp-i18n'
             ]);
+            wp_enqueue_style('wpgutenberg-css', plugins_url('assets/build/wpgutenberg/bundle.css', __FILE__));
             wp_set_script_translations('wpgutenberg', 'gtbabel-plugin', plugin_dir_path(__FILE__) . 'languages');
             global $post;
             wp_localize_script('wpgutenberg', 'wpgutenberg_data', [

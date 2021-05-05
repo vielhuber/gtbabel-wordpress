@@ -10,6 +10,11 @@ Official WordPress plugin repository that can be used to build the free and pro 
 -   Clone [gtbabel/wordpress](https://github.com/gtbabel/wordpress) into `/gtbabel/wordpress`
 -   Inside `/gtbabel/wordpress`, create a relative symlink: `ln -s ./../core/vendor ./vendor`
 
+### Build pipeline
+
+-   `npm install`
+-   `npm run dev` / `npm run prod`
+
 ### Test
 
 -   Copy `/deploy/gtbabel-dev.sh` to your themes folder
