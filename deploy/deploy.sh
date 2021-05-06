@@ -180,9 +180,9 @@ do
         cd $SCRIPT_DIR
         echo -n '{
             "name": "'"$(grep "^ *\* Plugin Name:" ./gtbabelpro.php | cut -d":" -f2- | xargs)"'",
-            "version": "'"$(grep "^ *\* Version:" ./gtbabelpro.php | cut -d":" -f2- | xargs)"'",
-            "requires": "'"$(grep "^ *\* Requires at least:" ./gtbabelpro.php | cut -d":" -f2- | xargs)"'",
-            "tested": "'"$(grep "^ *\* Tested up to:" ./gtbabelpro.php | cut -d":" -f2- | xargs)"'",
+            "version": "'"$(grep "^Stable tag:" ./readme.txt | cut -d":" -f2- | xargs)"'",
+            "requires": "'"$(grep "^Requires at least:" ./readme.txt | cut -d":" -f2- | xargs)"'",
+            "tested": "'"$(grep "^Tested up to:" ./readme.txt | cut -d":" -f2- | xargs)"'",
             "file": "'"$(base64 -w 0 ./deploy/_gtbabelpro.zip)"'",
             "icon": "'"$(base64 -w 0 ./assets/plugin/icon-128x128.png)"'"
         }' | curl\
