@@ -4,6 +4,8 @@
  * Plugin URI: https://www.gtbabel.com
  * Description: Instant server-side translation of any page.
  * Version: 6.0.7
+ * Requires at least: 5
+ * Tested up to: 5.7
  * Author: Gtbabel
  * Author URI: https://www.gtbabel.com
  * License: free
