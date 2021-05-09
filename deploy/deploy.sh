@@ -120,7 +120,7 @@ do
         mv ./"$SLUG_FREE".php ./"$SLUG_PRO".php
         find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/Plugin Name: $NAME_FREE/Plugin Name: $NAME_PRO/g"
         find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/\$name = '$NAME_FREE'/\$name = '$NAME_PRO'/g"
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'prefix' => 'Scoped$NAME_FREE'/'prefix' => 'Scoped$NAME_FREEPro'/g"
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'prefix' => 'Scoped""$NAME_FREE""'/'prefix' => 'Scoped""$NAME_FREE""Pro'/g"
         msgfmt ./languages/"$SLUG_FREE"-plugin-de_DE.po -o ./languages/"$SLUG_FREE"-plugin-de_DE.mo
     fi
 
@@ -193,16 +193,15 @@ do
     # make release for pro plugin: call api
     if [[ "$TYPE" == "PRO" && $RELEASE == true ]]; then
         cd $SCRIPT_DIR
-        cd ./deploy
         echo -n '{
-            "name": "'"$(grep "^ *\* Plugin Name:" ./"'"$SLUG_PRO"'".php | cut -d":" -f2- | xargs)"'",
-            "version": "'"$(grep "^Stable tag:" ./readme.txt | cut -d":" -f2- | xargs)"'",
-            "requires": "'"$(grep "^Requires at least:" ./readme.txt | cut -d":" -f2- | xargs)"'",
-            "tested": "'"$(grep "^Tested up to:" ./readme.txt | cut -d":" -f2- | xargs)"'",
-            "file": "'"$(base64 -w 0 ./deploy/_"'"$SLUG_PRO"'".zip)"'",
-            "icon": "'"$(base64 -w 0 ./assets/plugin/icon-128x128.png)"'"
-        }' > release.log
-        cat release.log | curl\
+            "name": "'"$(grep "^ *\* Plugin Name:" ./deploy/build/"'"$SLUG_PRO"'".php | cut -d":" -f2- | xargs)"'",
+            "version": "'"$(grep "^Stable tag:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
+            "requires": "'"$(grep "^Requires at least:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
+            "tested": "'"$(grep "^Tested up to:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
+            "file": "'"$(base64 -w 0 ./deploy/_"$SLUG_PRO".zip)"'",
+            "icon": "'"$(base64 -w 0 ./deploy/build/assets/plugin/icon-128x128.png)"'"
+        }' > ./deploy/release.log
+        cat ./deploy/release.log | curl\
             -H "Content-Type: application/json"\
             -u "$API_USERNAME":"$API_PASSWORD"\
             -X POST\
