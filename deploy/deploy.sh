@@ -4,21 +4,43 @@ SLUG_FREE="gtbabel"
 NAME_FREE="Gtbabel"
 SLUG_PRO="gtbabelpro"
 NAME_PRO="Gtbabel Pro"
+SVN_USERNAME="gtbabel"
+API_URL="http://gtbabel-web.local.vielhuber.de/wp-json/v1/release"
+API_USERNAME="api"
+API_PASSWORD="wZJoc%d@GsfUpIGOw*j*M01O"
+
+# parse command line arguments
+FREE=false
+PRO=false
+RELEASE=false
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+        # --free
+        --free)
+        FREE=true
+        ;;
+        # --pro
+        --pro)
+        PRO=true
+        ;;
+        # --release
+        --release)
+        RELEASE=true
+        ;;
+        *)
+        echo "Unknown option '$key'"
+        ;;
+    esac
+    shift
+done
+if [[ "$FREE" == false && "$PRO" == false ]]; then
+  FREE=true
+  PRO=true
+fi
 
 # output commands
 set -x
-
-# determine mode
-if [[ ( -n "$1" ) && ( $1 != "--release" ) ]]; then
-    echo "wrong arguments provided"
-    exit
-fi
-if [[ ( -z "$1" ) || ( $1 != "--release" ) ]]; then
-    RELEASE=false
-fi
-if [[ ( -n "$1" ) && ( $1 == "--release" ) ]]; then
-    RELEASE=true
-fi
 
 # switch to composer 1 (https://github.com/humbug/php-scoper/issues/452)
 composer self-update --1
@@ -45,12 +67,19 @@ fi
 # increase version number in readme.txt and main php
 if [ $RELEASE == true ]; then
     sed -i -e "s/Stable tag: [0-9]\.[0-9]\.[0-9]/Stable tag: $v_new/" ./readme.txt
-    sed -i -e "s/ \* Version: [0-9]\.[0-9]\.[0-9]/ * Version: $v_new/" ./gtbabel.php
+    sed -i -e "s/ \* Version: [0-9]\.[0-9]\.[0-9]/ * Version: $v_new/" ./"$SLUG_FREE".php
 fi
 
 
 for TYPE in "FREE" "PRO" ;
 do
+
+    if [[ "$TYPE" == "FREE" && "$FREE" == false ]]; then
+      continue
+    fi
+    if [[ "$TYPE" == "PRO" && "$PRO" == false ]]; then
+      continue
+    fi
 
     # determine names
     if [ "$TYPE" == "FREE" ]; then
@@ -88,25 +117,11 @@ do
         cd ./deploy/build
 
         # careful
-        mv ./gtbabel.php ./gtbabelpro.php
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/Plugin Name: Gtbabel/Plugin Name: Gtbabel Pro/g'
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/\$name = 'Gtbabel'/\$name = 'Gtbabel Pro'/g"
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'prefix' => 'ScopedGtbabel'/'prefix' => 'ScopedGtbabelPro'/g"
-        msgfmt ./languages/gtbabel-plugin-de_DE.po -o ./languages/gtbabel-plugin-de_DE.mo
-
-        # aggressive
-        #find . -type d -name "*" -print0 | xargs -0 rename 's/Gtbabel/GtbabelPro/g' {}
-        #find . -type d -name "*" -print0 | xargs -0 rename 's/gtbabel/gtbabelpro/g' {}
-        #find . -type f -name "*" -print0 | xargs -0 rename 's/Gtbabel/GtbabelPro/g' {}
-        #find . -type f -name "*" -print0 | xargs -0 rename 's/gtbabel/gtbabelpro/g' {}
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/Gtbabel/GtbabelPro/g'
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabel/gtbabelpro/g'
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabelpro_languagepicker/gtbabel_languagepicker/g'
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/gtbabelpro\.com/gtbabel\.com/g'
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'GtbabelPro'/'Gtbabel Pro'/g"
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/"GtbabelPro"/"Gtbabel Pro"/g'
-        #find . -type f -name "*" -print0 | xargs -0 sed -i -e 's/Plugin Name: GtbabelPro/Plugin Name: Gtbabel Pro/g'
-        #msgfmt ./languages/gtbabelpro-plugin-de_DE.po -o ./languages/gtbabelpro-plugin-de_DE.mo
+        mv ./"$SLUG_FREE".php ./"$SLUG_PRO".php
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/Plugin Name: $NAME_FREE/Plugin Name: $NAME_PRO/g"
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/\$name = '$NAME_FREE'/\$name = '$NAME_PRO'/g"
+        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'prefix' => 'Scoped$NAME_FREE'/'prefix' => 'Scoped$NAME_FREEPro'/g"
+        msgfmt ./languages/"$SLUG_FREE"-plugin-de_DE.po -o ./languages/"$SLUG_FREE"-plugin-de_DE.mo
     fi
 
     # strip out pro code
@@ -153,44 +168,44 @@ do
         cd ./deploy/build
         mkdir svn
         cd ./svn
-        svn co https://plugins.svn.wordpress.org/gtbabel . --quiet
+        svn co https://plugins.svn.wordpress.org/"$SLUG_FREE" . --quiet
         sleep 2
         svn cleanup --quiet
         svn update --quiet
         sleep 2
 
         svn rm ./trunk/* --quiet
-        cp -r ./../gtbabel/. ./trunk/
+        cp -r ./../"$SLUG_FREE"/. ./trunk/
         svn add ./trunk/* --quiet
 
         svn rm ./assets/* --quiet
-        cp -r ./../gtbabel/assets/plugin/. ./assets/
+        cp -r ./../"$SLUG_FREE"/assets/plugin/. ./assets/
         svn add ./assets/* --quiet
 
         svn rm ./tags/* --quiet # delete ALL old versions
         #svn cp ./trunk ./tags/$v_new --quiet
-        cp -r ./../gtbabel/. ./tags/"$v_new"
+        cp -r ./../"$SLUG_FREE"/. ./tags/"$v_new"
         svn add ./tags/* --quiet
 
-        svn ci -m "$v_new" --username gtbabel
+        svn ci -m "$v_new" --username "$SVN_USERNAME"
     fi
 
     # make release for pro plugin: call api
     if [[ "$TYPE" == "PRO" && $RELEASE == true ]]; then
         cd $SCRIPT_DIR
         echo -n '{
-            "name": "'"$(grep "^ *\* Plugin Name:" ./gtbabelpro.php | cut -d":" -f2- | xargs)"'",
+            "name": "'"$(grep "^ *\* Plugin Name:" ./"'"$SLUG_PRO"'".php | cut -d":" -f2- | xargs)"'",
             "version": "'"$(grep "^Stable tag:" ./readme.txt | cut -d":" -f2- | xargs)"'",
             "requires": "'"$(grep "^Requires at least:" ./readme.txt | cut -d":" -f2- | xargs)"'",
             "tested": "'"$(grep "^Tested up to:" ./readme.txt | cut -d":" -f2- | xargs)"'",
-            "file": "'"$(base64 -w 0 ./deploy/_gtbabelpro.zip)"'",
+            "file": "'"$(base64 -w 0 ./deploy/_"'"$SLUG_PRO"'".zip)"'",
             "icon": "'"$(base64 -w 0 ./assets/plugin/icon-128x128.png)"'"
         }' | curl\
             -H "Content-Type: application/json"\
-            -u api:wZJoc%d@GsfUpIGOw*j*M01O\
+            -u "$API_USERNAME":"$API_PASSWORD"\
             -X POST\
             -d @-\
-            http://gtbabel-web.local.vielhuber.de/wp-json/v1/release
+            "$API_URL"
     fi
 
     # remove obsolete files
