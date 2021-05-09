@@ -193,6 +193,7 @@ do
     # make release for pro plugin: call api
     if [[ "$TYPE" == "PRO" && $RELEASE == true ]]; then
         cd $SCRIPT_DIR
+        cd ./deploy/build
         echo -n '{
             "name": "'"$(grep "^ *\* Plugin Name:" ./"'"$SLUG_PRO"'".php | cut -d":" -f2- | xargs)"'",
             "version": "'"$(grep "^Stable tag:" ./readme.txt | cut -d":" -f2- | xargs)"'",
@@ -200,7 +201,8 @@ do
             "tested": "'"$(grep "^Tested up to:" ./readme.txt | cut -d":" -f2- | xargs)"'",
             "file": "'"$(base64 -w 0 ./deploy/_"'"$SLUG_PRO"'".zip)"'",
             "icon": "'"$(base64 -w 0 ./assets/plugin/icon-128x128.png)"'"
-        }' | curl\
+        }' > release.log
+        cat release.log | curl\
             -H "Content-Type: application/json"\
             -u "$API_USERNAME":"$API_PASSWORD"\
             -X POST\
