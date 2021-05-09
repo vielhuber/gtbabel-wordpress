@@ -194,7 +194,7 @@ do
     if [[ "$TYPE" == "PRO" && $RELEASE == true ]]; then
         cd $SCRIPT_DIR
         echo -n '{
-            "name": "'"$(grep "^ *\* Plugin Name:" ./deploy/build/"'"$SLUG_PRO"'".php | cut -d":" -f2- | xargs)"'",
+            "name": "'"$(grep "^ *\* Plugin Name:" ./deploy/build/"$SLUG_PRO".php | cut -d":" -f2- | xargs)"'",
             "version": "'"$(grep "^Stable tag:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
             "requires": "'"$(grep "^Requires at least:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
             "tested": "'"$(grep "^Tested up to:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
