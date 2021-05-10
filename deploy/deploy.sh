@@ -5,7 +5,7 @@ NAME_FREE="Gtbabel"
 SLUG_PRO="gtbabelpro"
 NAME_PRO="Gtbabel Pro"
 SVN_USERNAME="gtbabel"
-API_URL="http://gtbabel-web.local.vielhuber.de/wp-json/v1/release"
+API_URL="https://gtbabel.com/wp-json/v1/release"
 API_USERNAME="api"
 API_PASSWORD="wZJoc%d@GsfUpIGOw*j*M01O"
 
