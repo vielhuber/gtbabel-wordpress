@@ -37,9 +37,9 @@ Yes.
 
 Yes.
 
-= Can I use language specific subdomains or different domains? =
+= Whats the difference between the free and the pro plugin? =
 
-Currently only a path based approach is supported. However, this feature is planned in the future.
+The biggest limitation of the free version is the translation into a target language. With the pro version you can translate your website in as many target languages as you want, while using many more advanced features.
 
 = Where are my language files, logs and settings stored? =
 
