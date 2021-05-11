@@ -479,7 +479,7 @@ class GtbabelWordPress
 
         global $custom_options;
         $custom_options = [
-            'plugin_slug' => 'gtbabel',
+            'plugin_slug' => 'gtbabelpro',
             'update_url' => 'https://gtbabel.com/wp-json/v1/update',
             'license_key' => get_option('gtbabel_license_key'),
             'cache_time' => 60 // debug
