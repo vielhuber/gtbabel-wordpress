@@ -602,6 +602,7 @@ body[class*='_page_gtbabel-wizard'] #wpbody {
     padding: 7px 10px;
     margin: 10px 0;
     color: #fff;
+    box-sizing: border-box;
 }
 .gtbabel__basicauth-note--warning {
     background-color: #dac651;
