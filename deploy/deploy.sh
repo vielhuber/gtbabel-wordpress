@@ -202,6 +202,7 @@ do
             "icon": "'"$(base64 -w 0 ./deploy/build/assets/plugin/icon-128x128.png)"'"
         }' > ./deploy/release.log
         cat ./deploy/release.log | curl\
+            -L\
             -H "Content-Type: application/json"\
             -u "$API_USERNAME":"$API_PASSWORD"\
             -X POST\
