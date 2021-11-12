@@ -203,6 +203,7 @@ do
         }' > ./deploy/release.log
         cat ./deploy/release.log | curl\
             -L\
+            --insecure\
             -H "Content-Type: application/json"\
             -u "$API_USERNAME":"$API_PASSWORD"\
             -X POST\
