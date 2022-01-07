@@ -990,7 +990,7 @@ class GtbabelWordPress
         $args[] = 'gtbabel_prevent_lngs';
         $args[] = '%,' . $lng . ',%';
         global $wpdb;
-        $query = 'SELECT post_id FROM wp_postmeta WHERE meta_key = %s AND (meta_value LIKE %s';
+        $query = 'SELECT post_id FROM '.$wpdb->prefix.'postmeta WHERE meta_key = %s AND (meta_value LIKE %s';
         if (!is_user_logged_in()) {
             $args[] = '%,' . $lng . '_guest,%';
             $query .= 'OR meta_value LIKE %s';
