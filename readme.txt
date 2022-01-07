@@ -53,6 +53,10 @@ Yes (in order to ensure portability).
 
 The files are intentionally preserved.
 
+= Is this plugin multisite compatible? =
+
+Yes, but translations are intentionally not shared across sites.
+
 = Can I use Gtbabel without WordPress? =
 
 Yes (see [repository](https://github.com/gtbabel/core)).
