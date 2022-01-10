@@ -134,7 +134,7 @@ do
     # do the prefixing with php-scoper
     cd $SCRIPT_DIR
     cd ./deploy/build
-    wget https://github.com/humbug/php-scoper/releases/download/0.13.1/php-scoper.phar
+    wget https://github.com/humbug/php-scoper/releases/download/0.15.0/php-scoper.phar
     php ./php-scoper.phar add-prefix --config scoper.inc.php
     cd ./build
     composer dump-autoload
