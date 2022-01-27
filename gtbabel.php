@@ -45,7 +45,9 @@ class GtbabelWordPress
         $this->initUpdateCapabilities();
         $this->sendMailNotificationsSetupCron();
         $this->filterSpecificUrls();
-        $this->autoTranslatePluginMails();
+        $this->autoTranslateContactForm7Mails();
+        $this->autoTranslateWPFormsFrontend();
+        $this->autoTranslateWPMails();
         $this->startHook();
         $this->stopHook();
     }
@@ -84,13 +86,6 @@ class GtbabelWordPress
                 PHP_INT_MAX
             );
         }
-    }
-
-    private function autoTranslatePluginMails()
-    {
-        $this->autoTranslateContactForm7Mails();
-        $this->autoTranslateWPFormsFrontend();
-        $this->autoTranslateMails();
     }
 
     private function autoTranslateContactForm7Mails()
@@ -144,11 +139,14 @@ class GtbabelWordPress
         );
     }
 
-    private function autoTranslateMails()
+    private function autoTranslateWPMails()
     {
         add_filter(
             'wp_mail',
             function ($atts) {
+                if ($this->gtbabel->settings->get('translate_wp_mail') !== true) {
+                    return $atts;
+                }
                 $atts['subject'] = $this->gtbabel->translate($atts['subject']);
                 $atts['message'] = $this->gtbabel->translate($atts['message']);
                 return $atts;
@@ -1442,7 +1440,8 @@ class GtbabelWordPress
                             'auto_translation',
                             'auto_translation_service',
                             'url_settings',
-                            'wizard_finished'
+                            'wizard_finished',
+                            'translate_wp_mail',
                         ]
                         as $fields__value
                     ) {
@@ -1479,7 +1478,8 @@ class GtbabelWordPress
                             'auto_translation',
                             'localize_js',
                             'detect_dom_changes',
-                            'wizard_finished'
+                            'wizard_finished',
+                            'translate_wp_mail'
                         ]
                         as $checkbox__value
                     ) {
@@ -2248,6 +2248,17 @@ class GtbabelWordPress
         echo '<div class="gtbabel__inputbox">';
         echo '<input class="gtbabel__input gtbabel__input--checkbox" type="checkbox" id="gtbabel_translate_wp_localize_script" name="gtbabel[translate_wp_localize_script]" value="1"' .
             (@$settings['translate_wp_localize_script'] == '1' ? ' checked="checked"' : '') .
+            ' />';
+        echo '</div>';
+        echo '</li>';
+
+        echo '<li class="gtbabel__field">';
+        echo '<label for="gtbabel_translate_wp_mail" class="gtbabel__label">';
+        echo __('wp_mail translation', 'gtbabel-plugin');
+        echo '</label>';
+        echo '<div class="gtbabel__inputbox">';
+        echo '<input class="gtbabel__input gtbabel__input--checkbox" type="checkbox" id="gtbabel_translate_wp_mail" name="gtbabel[translate_wp_mail]" value="1"' .
+            (@$settings['translate_wp_mail'] == '1' ? ' checked="checked"' : '') .
             ' />';
         echo '</div>';
         echo '</li>';
