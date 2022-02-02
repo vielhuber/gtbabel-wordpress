@@ -3516,6 +3516,13 @@ class GtbabelWordPress
 
         echo '<h2 class="gtbabel__subtitle">' . __('Import', 'gtbabel-plugin') . '</h2>';
 
+        echo '<p class="gtbabel__paragraph">';
+        echo __(
+            'Only translations that already exist will be updated and overwritten (or in case of an empty translation, deleted).',
+            'gtbabel-plugin'
+        );
+        echo '</p>';
+
         echo '<form enctype="multipart/form-data" class="gtbabel__form" method="post" action="' .
             admin_url('admin.php?page=gtbabel-exportimport') .
             '">';
