@@ -45,7 +45,7 @@ The biggest limitation of the free version is the translation into a target lang
 
 They are stored in /wp-content/uploads/gtbabel.
 
-= Should I checkout my language files, logs and settings into version control? =
+= Should I check in my language files, logs and settings into version control? =
 
 Yes (in order to ensure portability).
 

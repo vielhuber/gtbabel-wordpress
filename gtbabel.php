@@ -4375,7 +4375,7 @@ if(function_exists(\'gtbabel_languagepicker\')) {
                 '">' .
                 __('Back', 'gtbabel-plugin') .
                 '</a>';
-            echo '<a class="button button-primary" href="' . get_bloginfo('url') . '">';
+            echo '<a class="button button-primary" onclick="window.open(\''.get_bloginfo('url').'\');return true;" href="' . admin_url('admin.php?page=gtbabel-settings') . '">';
             echo __('To the website', 'gtbabel-plugin');
             echo '</a>';
             echo '</div>';
@@ -4610,7 +4610,7 @@ if(function_exists(\'gtbabel_languagepicker\')) {
             }
             echo '<li>';
             echo $data__value['label'] . ': ';
-            echo $data__value['length'];
+            echo number_format($data__value['length'], 0, '', '.');
             echo ' ';
             echo __('Characters', 'gtbabel-plugin');
             echo ' (~' . number_format($data__value['costs'], 2, ',', '.') . ' €)';
