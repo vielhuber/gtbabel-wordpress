@@ -854,7 +854,11 @@ class GtbabelWordPress
                     if (is_singular() && $query->name != '') {
                         return;
                     }
-                    $query->set('post__not_in', $this->handlePreventLngsGetExcludedIds());
+                    $exclude = $this->handlePreventLngsGetExcludedIds();
+                    if( !empty($query->get('post__not_in')) ) {
+                        $exclude = array_merge($query->get('post__not_in'), $exclude);
+                    }
+                    $query->set('post__not_in', $exclude);
                 }
             },
             PHP_INT_MAX
