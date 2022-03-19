@@ -367,7 +367,7 @@ class GtbabelWordPress
 
         // settings that can be changed via url
         foreach (
-            ['discovery_log', 'auto_set_discovered_strings_checked', 'auto_add_translations', 'redirect_root_domain']
+            ['discovery_log', 'auto_set_discovered_strings_checked', 'auto_add_translations', 'redirect_root_domain', 'translate_xml']
             as $parameters__value
         ) {
             if (isset($_GET['gtbabel_' . $parameters__value]) && $_GET['gtbabel_' . $parameters__value] != '') {
@@ -4489,7 +4489,8 @@ if(function_exists(\'gtbabel_languagepicker\')) {
         $discovery_log = true,
         $auto_set_discovered_strings_checked = false,
         $auto_add_translations = true,
-        $redirect_root_domain = 'source'
+        $redirect_root_domain = 'source',
+        $translate_xml = null
     ) {
         if (
             $bypass_cache === true ||
@@ -4515,6 +4516,9 @@ if(function_exists(\'gtbabel_languagepicker\')) {
         if ($redirect_root_domain !== null) {
             $args[] = 'gtbabel_redirect_root_domain=' . $redirect_root_domain;
         }
+        if ($translate_xml !== null) {
+            $args[] = 'gtbabel_translate_xml=' . ($translate_xml === true ? '1' : '0');
+        }
         if ($this->gtbabel->settings->get('basic_auth') != '') {
             $url = str_replace('http://', 'http://' . $this->gtbabel->settings->get('basic_auth') . '@', $url);
             $url = str_replace('https://', 'https://' . $this->gtbabel->settings->get('basic_auth') . '@', $url);
@@ -4536,7 +4540,8 @@ if(function_exists(\'gtbabel_languagepicker\')) {
                     false,
                     false,
                     false,
-                    'source'
+                    'source',
+                    false
                 );
                 $urls = __::extract_urls_from_sitemap($sitemap_url);
             }
