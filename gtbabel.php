@@ -64,6 +64,10 @@ class GtbabelWordPress
             if ($this->gtbabel->settings->get('translate_wp_localize_script_include') === null) {
                 return;
             }
+            // divi
+            if( isset($_GET['et_fb']) && $_GET['et_fb'] != '' ) {
+                return;
+            }
             $GLOBALS['wp_scripts'] = new GtbabelLocalizeScript();
         });
     }
