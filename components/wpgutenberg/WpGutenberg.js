@@ -1,13 +1,20 @@
 export default class WpGutenberg {
     init() {
-        // this has to be left out (because of https://github.com/WordPress/gutenberg/issues/9757)
-        //wp.domReady(() => {
+        // this has to be done this way (because of https://github.com/WordPress/gutenberg/issues/9757)
         this.initAltLng();
         this.initPreventLngs();
-        //});
+        wp.domReady(() => {
+            this.initAltLng();
+            this.initPreventLngs();
+        });
     }
 
     initAltLng() {
+        if (this.runInitAltLng === true || wp === undefined || wp.hooks === undefined || wp.plugins === undefined) {
+            return;
+        }
+        this.runInitAltLng = true;
+
         wp.hooks.addFilter('blocks.registerBlockType', 'custom/attrs', settings => {
             settings.attributes = {
                 ...settings.attributes,
@@ -68,6 +75,16 @@ export default class WpGutenberg {
     }
 
     initPreventLngs() {
+        if (
+            this.runInitPreventLngs === true ||
+            wp === undefined ||
+            wp.hooks === undefined ||
+            wp.plugins === undefined
+        ) {
+            return;
+        }
+        this.runInitPreventLngs = true;
+
         wp.plugins.registerPlugin('my-plugin-sidebar', {
             render: () => {
                 return wp.element.createElement(
@@ -137,6 +154,7 @@ export default class WpGutenberg {
                                     label: languages__value
                                 });
                             }
+                            /*
                             elements.push(
                                 wp.element.createElement(wp.components.BaseControl, {
                                     help:
@@ -146,6 +164,7 @@ export default class WpGutenberg {
                                         props.get_gtbabel_prevent_lngs
                                 })
                             );
+                            */
                             elements.push(
                                 wp.element.createElement(wp.components.SelectControl, {
                                     label: wp.i18n.__('Source language', 'gtbabel-plugin'),
