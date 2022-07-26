@@ -50,7 +50,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SCRIPT_DIR="$( dirname "$SCRIPT_DIR" )"
 
 # determine next version
-if [ $RELEASE == true ]; then
+if [[ "$RELEASE" == true ]]; then
     cd $SCRIPT_DIR
     v=`git describe --abbrev=0 --tags 2>/dev/null`
     n=(${v//./ })
@@ -65,7 +65,7 @@ if [ $RELEASE == true ]; then
 fi
 
 # increase version number in readme.txt and main php
-if [ $RELEASE == true ]; then
+if [[ "$RELEASE" == true ]]; then
     sed -i -e "s/Stable tag: [0-9]\.[0-9]\.[0-9]/Stable tag: $v_new/" ./readme.txt
     sed -i -e "s/ \* Version: [0-9]\.[0-9]\.[0-9]/ * Version: $v_new/" ./"$SLUG_FREE".php
 fi
@@ -82,11 +82,11 @@ do
     fi
 
     # determine names
-    if [ "$TYPE" == "FREE" ]; then
+    if [[ "$TYPE" == "FREE" ]]; then
         SLUG="$SLUG_FREE"
         NAME="$NAME_FREE"
     fi
-    if [ "$TYPE" == "PRO" ]; then
+    if [[ "$TYPE" == "PRO" ]]; then
         SLUG="$SLUG_PRO"
         NAME="$NAME_PRO"
     fi
@@ -111,8 +111,13 @@ do
     composer install --no-dev
     composer update --no-dev
 
+    # remove hotloaded functions by stringhelper (since in projects with gtbabel+stringhelper this fails!)
+    sed -i -e "s/\"src\/functions.php\"//g" ./vendor/vielhuber/stringhelper/composer.json
+    rm -rf ./vendor/composer/*
+    composer dump-autoload
+
     # replace name
-    if [ "$TYPE" == "PRO" ]; then
+    if [[ "$TYPE" == "PRO" ]]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
 
@@ -125,7 +130,7 @@ do
     fi
 
     # strip out pro code
-    if [ "$TYPE" == "FREE" ]; then
+    if [[ "$TYPE" == "FREE" ]]; then
         cd $SCRIPT_DIR
         cd ./deploy/build
         find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
@@ -219,7 +224,7 @@ done
 
 
 # git push + tag
-if [ $RELEASE == true ]; then
+if [[ "$RELEASE" == true ]]; then
     cd $SCRIPT_DIR
     git add -A . && git commit -m "$v_new" && git push origin HEAD && git tag -a $v_new -m "$v_new" && git push --tags
 fi
