@@ -112,9 +112,11 @@ do
     composer update --no-dev
 
     # remove hotloaded functions by stringhelper (since in projects with gtbabel+stringhelper this fails!)
-    #sed -i -e "s/\"src\/functions.php\"//g" ./vendor/vielhuber/stringhelper/composer.json
-    #rm -rf ./vendor/composer/*
-    #composer dump-autoload
+    rm -rf ./vendor
+    composer install --no-dev --no-autoloader
+    composer update --no-dev --no-autoloader
+    sed -i -e "s/\"src\/functions.php\"//g" ./vendor/composer/installed.json
+    composer dump-autoload
 
     # replace name
     if [[ "$TYPE" == "PRO" ]]; then
