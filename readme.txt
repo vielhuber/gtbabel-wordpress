@@ -3,7 +3,7 @@ Contributors: Gtbabel
 Tags: bilingual, language, multilingual, translate, translation
 Donate link: https://www.gtbabel.com
 Requires at least: 5.3.2
-Tested up to: 5.7.1
+Tested up to: 6.0.3
 Requires PHP: 7.2
 Stable tag: 6.5.9
 License: GPLv2 or later
