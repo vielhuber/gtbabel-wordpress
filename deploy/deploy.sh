@@ -13,6 +13,7 @@ API_PASSWORD="wZJoc%d@GsfUpIGOw*j*M01O"
 FREE=false
 PRO=false
 RELEASE=false
+DEBUG=false
 while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
@@ -28,6 +29,10 @@ while [[ $# -gt 0 ]]; do
         --release)
         RELEASE=true
         ;;
+        # --debug
+        --debug)
+        DEBUG=true
+        ;;
         *)
         echo "Unknown option '$key'"
         ;;
@@ -39,11 +44,18 @@ if [[ "$FREE" == false && "$PRO" == false ]]; then
   PRO=true
 fi
 
+if [[ "$DEBUG" == true ]]; then
+    echo "Press CTRL+C to proceed."
+    trap "pkill -f 'sleep 1h'" INT
+    trap "set +x ; sleep 1h ; set -x" DEBUG
+fi
+
 # output commands
 set -x
 
-# switch to composer 1 (https://github.com/humbug/php-scoper/issues/452)
-composer self-update --1
+# NOT NEEDED ANYMORE: switch to composer 1 (https://github.com/humbug/php-scoper/issues/452)
+composer self-update --2
+#composer self-update --1
 
 # save parent folder
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -141,7 +153,7 @@ do
     # do the prefixing with php-scoper
     cd $SCRIPT_DIR
     cd ./deploy/build
-    wget https://github.com/humbug/php-scoper/releases/download/0.15.0/php-scoper.phar
+    wget https://github.com/humbug/php-scoper/releases/download/0.18.2/php-scoper.phar
     php ./php-scoper.phar add-prefix --config scoper.inc.php
     cd ./build
     composer dump-autoload

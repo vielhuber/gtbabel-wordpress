@@ -1025,6 +1025,8 @@ class GtbabelWordPress
     private function modifyGutenbergSidebar()
     {
         add_action('enqueue_block_editor_assets', function () {
+            global $post;
+            if( $post === null ) { return; }
             wp_enqueue_script('wpgutenberg', plugins_url('assets/build/wpgutenberg/bundle.js', __FILE__), [
                 'wp-blocks',
                 'wp-components',
@@ -1037,7 +1039,6 @@ class GtbabelWordPress
             ]);
             wp_enqueue_style('wpgutenberg-css', plugins_url('assets/build/wpgutenberg/bundle.css', __FILE__));
             wp_set_script_translations('wpgutenberg', 'gtbabel-plugin', plugin_dir_path(__FILE__) . 'languages');
-            global $post;
             wp_localize_script('wpgutenberg', 'wpgutenberg_data', [
                 'languages' => $this->gtbabel->settings->getSelectedLanguageCodesLabels(),
                 'languages_without_source' => $this->gtbabel->settings->getSelectedLanguageCodesWithoutSource(),
