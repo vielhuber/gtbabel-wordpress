@@ -1172,6 +1172,13 @@ class GtbabelWordPress
         add_shortcode('gtbabel_languagepicker', function () {
             return $this->gtbabel->data->getLanguagePickerHtml();
         });
+        add_shortcode('gtbabel_languagepicker_flat', function () {
+            return $this->gtbabel->data->getLanguagePickerHtml(
+                true,
+                null,
+                true
+            );
+        });
     }
 
     private function languagePickerMenu()
@@ -1197,6 +1204,23 @@ class GtbabelWordPress
                                         'type_label' => '',
                                         'title' => __('Language picker', 'gtbabel-plugin'),
                                         'url' => '#gtbabel_languagepicker',
+                                        'type' => 'custom',
+                                        'object' => 'gtbabel-slug-slug',
+                                        'db_id' => 0,
+                                        'menu_item_parent' => 0,
+                                        'post_parent' => 0,
+                                        'target' => '',
+                                        'attr_title' => '',
+                                        'description' => '',
+                                        'classes' => [],
+                                        'xfn' => ''
+                                    ],
+                                    (object) [
+                                        'ID' => 2,
+                                        'object_id' => 2,
+                                        'type_label' => '',
+                                        'title' => __('Language picker (flat)', 'gtbabel-plugin'),
+                                        'url' => '#gtbabel_languagepicker_flat',
                                         'type' => 'custom',
                                         'object' => 'gtbabel-slug-slug',
                                         'db_id' => 0,
@@ -3877,6 +3901,9 @@ class GtbabelWordPress
         echo '</h2>';
         echo '<p class="gtbabel__paragraph">';
         echo sprintf(__('Just add %s to your code.', 'gtbabel-plugin'), '<code>[gtbabel_languagepicker]</code>');
+        echo '</p>';
+        echo '<p class="gtbabel__paragraph">';
+        echo sprintf(__('If you only want to show non active languages, you also can also use %s.', 'gtbabel-plugin'), '<code>[gtbabel_languagepicker_flat]</code>');
         echo '</p>';
 
         echo '<h2 class="gtbabel__subtitle">';

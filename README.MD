@@ -21,6 +21,7 @@ Official WordPress plugin repository that can be used to build the free and pro 
 ### Test
 
 -   Copy `/deploy/gtbabel-dev.sh` to your themes folder
+-   Change `BASE_PLUGIN` and `BASE_WORDPRESS`
 -   `./gtbabel-dev.sh start` / `./gtbabel-dev.sh stop`
 
 ### Release
