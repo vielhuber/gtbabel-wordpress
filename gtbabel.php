@@ -3,7 +3,7 @@
  * Plugin Name: Gtbabel
  * Plugin URI: https://www.gtbabel.com
  * Description: Instant server-side translation of any page.
- * Version: 6.7.1
+ * Version: 6.7.2
  * Author: Gtbabel
  * Author URI: https://www.gtbabel.com
  * License: free
@@ -5378,12 +5378,14 @@ if(function_exists(\'gtbabel_languagepicker\')) {
 
     private function isFreePlugin()
     {
+        // todo
+        return false;
         return $this->name === 'G' . 't' . 'b' . 'a' . 'b' . 'e' . 'l';
     }
 
     private function isProPlugin()
     {
-        // todo: this is always true atm
+        // todo
         return true;
         return $this->name === 'G' . 't' . 'b' . 'a' . 'b' . 'e' . 'l' . ' ' . 'P' . 'r' . 'o';
     }
