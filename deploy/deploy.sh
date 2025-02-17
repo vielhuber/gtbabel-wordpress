@@ -50,6 +50,9 @@ if [[ "$DEBUG" == true ]]; then
     trap "set +x ; sleep 1h ; set -x" DEBUG
 fi
 
+# disable pro (not needed at the moment)
+PRO=false
+
 # output commands
 set -x
 
@@ -143,12 +146,12 @@ do
         msgfmt ./languages/"$SLUG_FREE"-plugin-de_DE.po -o ./languages/"$SLUG_FREE"-plugin-de_DE.mo
     fi
 
-    # strip out pro code
-    if [[ "$TYPE" == "FREE" ]]; then
-        cd $SCRIPT_DIR
-        cd ./deploy/build
-        find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
-    fi
+    # strip out pro code (disabled atm)
+    #if [[ "$TYPE" == "FREE" ]]; then
+    #    cd $SCRIPT_DIR
+    #    cd ./deploy/build
+    #    find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
+    #fi
 
     # do the prefixing with php-scoper
     cd $SCRIPT_DIR

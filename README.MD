@@ -27,5 +27,4 @@ Official WordPress plugin repository that can be used to build the free and pro 
 ### Release
 
 -   `cd deploy`
--   `./deploy.sh`
--   `./deploy.sh --free --pro --release`
+-   `./deploy.sh --release`
