@@ -513,7 +513,7 @@ class GtbabelWordPress
                 $remote = wp_remote_post($custom_options['update_url'], [
                     'body' => wp_json_encode([
                         'key' => $custom_options['license_key'],
-                        'domain' => $_SERVER['HTTP_HOST']
+                        'domain' => @$_SERVER['HTTP_HOST']
                     ]),
                     'headers' => [
                         'Content-Type' => 'application/json'
@@ -581,7 +581,7 @@ class GtbabelWordPress
                     $remote = wp_remote_post($custom_options['update_url'], [
                         'body' => wp_json_encode([
                             'key' => $custom_options['license_key'],
-                            'domain' => $_SERVER['HTTP_HOST']
+                            'domain' => @$_SERVER['HTTP_HOST']
                         ]),
                         'headers' => [
                             'Content-Type' => 'application/json'
@@ -4624,7 +4624,7 @@ if(function_exists(\'gtbabel_languagepicker\')) {
     private function fetch($url, $with_current_session = true)
     {
         if( $with_current_session === true ) {
-            if( mb_strpos($url,'http'.((isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off')?'s':'').'://'.$_SERVER['HTTP_HOST']) !== 0 ) {
+            if( !isset($_SERVER['HTTP_HOST']) || mb_strpos($url,'http'.((isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off')?'s':'').'://'.$_SERVER['HTTP_HOST']) !== 0 ) {
                 return null;
             }
         }
