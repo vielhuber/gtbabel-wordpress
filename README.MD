@@ -1,9 +1,8 @@
 # 🌐 Gtbabel for WordPress 🌐
 
-Official WordPress plugin repository that can be used to build the free and pro version of the plugin.
+Official WordPress plugin repository that can be used to build a new version of the plugin.
 
--   Free URL: [https://wordpress.org/plugins/gtbabel](https://wordpress.org/plugins/gtbabel)
--   Pro URL: [https://gtbabel.com](https://gtbabel.com)
+-   Repository-URL: [https://wordpress.org/plugins/gtbabel](https://wordpress.org/plugins/gtbabel)
 
 ## Development
 
