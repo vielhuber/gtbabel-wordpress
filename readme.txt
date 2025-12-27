@@ -3,9 +3,9 @@ Contributors: Gtbabel
 Tags: bilingual, language, multilingual, translate, translation
 Donate link: https://www.gtbabel.com
 Requires at least: 5.3.2
-Tested up to: 6.7.2
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 6.8.0
+Stable tag: 6.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,9 +37,9 @@ Yes.
 
 Yes.
 
-= Whats the difference between the free and the pro plugin? =
+= Is there a limitation or a pro version? =
 
-The biggest limitation of the free version is the translation into a target language. With the pro version you can translate your website in as many target languages as you want, while using many more advanced features.
+There is no limitation, everything is available in this plugin. You can translate your website in as many target languages as you want, while using many more advanced features.
 
 = Where are my language files, logs and settings stored? =
 

@@ -1,30 +1,15 @@
 #!/bin/bash
 
-SLUG_FREE="gtbabel"
-NAME_FREE="Gtbabel"
-SLUG_PRO="gtbabelpro"
-NAME_PRO="Gtbabel Pro"
+SLUG="gtbabel"
+NAME="Gtbabel"
 SVN_USERNAME="gtbabel"
-API_URL="https://gtbabel.com/wp-json/v1/release"
-API_USERNAME="api"
-API_PASSWORD="wZJoc%d@GsfUpIGOw*j*M01O"
 
 # parse command line arguments
-FREE=false
-PRO=false
 RELEASE=false
 DEBUG=false
 while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-        # --free
-        --free)
-        FREE=true
-        ;;
-        # --pro
-        --pro)
-        PRO=true
-        ;;
         # --release
         --release)
         RELEASE=true
@@ -39,19 +24,12 @@ while [[ $# -gt 0 ]]; do
     esac
     shift
 done
-if [[ "$FREE" == false && "$PRO" == false ]]; then
-  FREE=true
-  PRO=true
-fi
 
 if [[ "$DEBUG" == true ]]; then
     echo "Press CTRL+C to proceed."
     trap "pkill -f 'sleep 1h'" INT
     trap "set +x ; sleep 1h ; set -x" DEBUG
 fi
-
-# disable pro (not needed at the moment)
-PRO=false
 
 # output commands
 set -x
@@ -82,163 +60,105 @@ fi
 # increase version number in readme.txt and main php
 if [[ "$RELEASE" == true ]]; then
     sed -i -e "s/Stable tag: [0-9]\.[0-9]\.[0-9]/Stable tag: $v_new/" ./readme.txt
-    sed -i -e "s/ \* Version: [0-9]\.[0-9]\.[0-9]/ * Version: $v_new/" ./"$SLUG_FREE".php
+    sed -i -e "s/ \* Version: [0-9]\.[0-9]\.[0-9]/ * Version: $v_new/" ./"$SLUG".php
 fi
 
+# copy all assets
+cd $SCRIPT_DIR
+mkdir ./deploy/build
+rsync -av --quiet --progress . ./deploy/build --exclude deploy
 
-for TYPE in "FREE" "PRO" ;
-do
+# delete symlink that has been created when developing locally
+cd $SCRIPT_DIR
+cd ./deploy/build
+unlink vendor
 
-    if [[ "$TYPE" == "FREE" && "$FREE" == false ]]; then
-      continue
-    fi
-    if [[ "$TYPE" == "PRO" && "$PRO" == false ]]; then
-      continue
-    fi
+# copy composer files to current folder (one level up) and run composer install
+cd $SCRIPT_DIR
+cp ./../core/composer.json ./deploy/build/composer.json
+cp -r ./../core/src ./deploy/build/src
+cp -r ./../core/components ./deploy/build/components
+cp ./../core/helpers.php ./deploy/build/helpers.php
+cd ./deploy/build/
+composer install --no-dev
+composer update --no-dev
 
-    # determine names
-    if [[ "$TYPE" == "FREE" ]]; then
-        SLUG="$SLUG_FREE"
-        NAME="$NAME_FREE"
-    fi
-    if [[ "$TYPE" == "PRO" ]]; then
-        SLUG="$SLUG_PRO"
-        NAME="$NAME_PRO"
-    fi
+# remove hotloaded functions by stringhelper (since in projects with gtbabel+stringhelper this fails!)
+rm -rf ./vendor
+composer install --no-dev --no-autoloader
+composer update --no-dev --no-autoloader
+sed -i -e "s/\"src\/functions.php\"//g" ./vendor/composer/installed.json
+composer dump-autoload
 
-    # copy all assets
-    cd $SCRIPT_DIR
-    mkdir ./deploy/build
-    rsync -av --quiet --progress . ./deploy/build --exclude deploy
+# strip out pro code (disabled atm)
+#if [[ "$TYPE" == "FREE" ]]; then
+#    cd $SCRIPT_DIR
+#    cd ./deploy/build
+#    find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
+#fi
 
-    # delete symlink that has been created when developing locally
-    cd $SCRIPT_DIR
-    cd ./deploy/build
-    unlink vendor
+# do the prefixing with php-scoper
+cd $SCRIPT_DIR
+cd ./deploy/build
+wget https://github.com/humbug/php-scoper/releases/download/0.18.2/php-scoper.phar
+php ./php-scoper.phar add-prefix --config scoper.inc.php
+cd ./build
+composer dump-autoload
+sleep 3
 
-    # copy composer files to current folder (one level up) and run composer install
-    cd $SCRIPT_DIR
-    cp ./../core/composer.json ./deploy/build/composer.json
-    cp -r ./../core/src ./deploy/build/src
-    cp -r ./../core/components ./deploy/build/components
-    cp ./../core/helpers.php ./deploy/build/helpers.php
-    cd ./deploy/build/
-    composer install --no-dev
-    composer update --no-dev
+# rename and cleanup the build directory
+cd $SCRIPT_DIR
+cd ./deploy/build
+mv ./build/ ./"$SLUG"/
+rm -f ./"$SLUG"/composer.json
+rm -f ./"$SLUG"/composer.lock
+rm -f ./"$SLUG"/package.json
+rm -f ./"$SLUG"/package-lock.json
+rm -f ./"$SLUG"/README.MD
+rm -f ./"$SLUG"/php-scoper.phar
+rm -f ./"$SLUG"/deploy-plugin.sh
+rm -f ./"$SLUG"/deploy-zip.sh
+rm -f ./"$SLUG"/scoper.inc.php
+rm -rf ./"$SLUG"/locales/
+rm -rf ./"$SLUG"/logs/
+rm -rf ./"$SLUG"/node_modules/
 
-    # remove hotloaded functions by stringhelper (since in projects with gtbabel+stringhelper this fails!)
-    rm -rf ./vendor
-    composer install --no-dev --no-autoloader
-    composer update --no-dev --no-autoloader
-    sed -i -e "s/\"src\/functions.php\"//g" ./vendor/composer/installed.json
-    composer dump-autoload
+# make a zip
+cd $SCRIPT_DIR
+cd ./deploy/build
+zip --quiet -r ./../_"$SLUG".zip ./"$SLUG"
 
-    # replace name
-    if [[ "$TYPE" == "PRO" ]]; then
-        cd $SCRIPT_DIR
-        cd ./deploy/build
-
-        # careful
-        mv ./"$SLUG_FREE".php ./"$SLUG_PRO".php
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/Plugin Name: $NAME_FREE/Plugin Name: $NAME_PRO/g"
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/\$name = '$NAME_FREE'/\$name = '$NAME_PRO'/g"
-        find . -type f -name "*" -print0 | xargs -0 sed -i -e "s/'prefix' => 'Scoped""$NAME_FREE""'/'prefix' => 'Scoped""$NAME_FREE""Pro'/g"
-        msgfmt ./languages/"$SLUG_FREE"-plugin-de_DE.po -o ./languages/"$SLUG_FREE"-plugin-de_DE.mo
-    fi
-
-    # strip out pro code (disabled atm)
-    #if [[ "$TYPE" == "FREE" ]]; then
-    #    cd $SCRIPT_DIR
-    #    cd ./deploy/build
-    #    find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
-    #fi
-
-    # do the prefixing with php-scoper
+# make release for plugin: add to subversion
+if [[ $RELEASE == true ]]; then
     cd $SCRIPT_DIR
     cd ./deploy/build
-    wget https://github.com/humbug/php-scoper/releases/download/0.18.2/php-scoper.phar
-    php ./php-scoper.phar add-prefix --config scoper.inc.php
-    cd ./build
-    composer dump-autoload
-    sleep 3
+    mkdir svn
+    cd ./svn
+    svn co https://plugins.svn.wordpress.org/"$SLUG" . --quiet
+    sleep 2
+    svn cleanup --quiet
+    svn update --quiet
+    sleep 2
 
-    # rename and cleanup the build directory
-    cd $SCRIPT_DIR
-    cd ./deploy/build
-    mv ./build/ ./"$SLUG"/
-    rm -f ./"$SLUG"/composer.json
-    rm -f ./"$SLUG"/composer.lock
-    rm -f ./"$SLUG"/package.json
-    rm -f ./"$SLUG"/package-lock.json
-    rm -f ./"$SLUG"/README.MD
-    rm -f ./"$SLUG"/php-scoper.phar
-    rm -f ./"$SLUG"/deploy-plugin.sh
-    rm -f ./"$SLUG"/deploy-zip.sh
-    rm -f ./"$SLUG"/scoper.inc.php
-    rm -rf ./"$SLUG"/locales/
-    rm -rf ./"$SLUG"/logs/
-    rm -rf ./"$SLUG"/node_modules/
+    svn rm ./trunk/* --quiet
+    cp -r ./../"$SLUG"/. ./trunk/
+    svn add ./trunk/* --quiet
 
-    # make a zip
-    cd $SCRIPT_DIR
-    cd ./deploy/build
-    zip --quiet -r ./../_"$SLUG".zip ./"$SLUG"
+    svn rm ./assets/* --quiet
+    cp -r ./../"$SLUG"/assets/plugin/. ./assets/
+    svn add ./assets/* --quiet
 
-    # make release for free plugin: add to subversion
-    if [[ "$TYPE" == "FREE" && $RELEASE == true ]]; then
-        cd $SCRIPT_DIR
-        cd ./deploy/build
-        mkdir svn
-        cd ./svn
-        svn co https://plugins.svn.wordpress.org/"$SLUG_FREE" . --quiet
-        sleep 2
-        svn cleanup --quiet
-        svn update --quiet
-        sleep 2
+    svn rm ./tags/* --quiet # delete ALL old versions
+    #svn cp ./trunk ./tags/$v_new --quiet
+    cp -r ./../"$SLUG"/. ./tags/"$v_new"
+    svn add ./tags/* --quiet
 
-        svn rm ./trunk/* --quiet
-        cp -r ./../"$SLUG_FREE"/. ./trunk/
-        svn add ./trunk/* --quiet
+    svn ci -m "$v_new" --username "$SVN_USERNAME"
+fi
 
-        svn rm ./assets/* --quiet
-        cp -r ./../"$SLUG_FREE"/assets/plugin/. ./assets/
-        svn add ./assets/* --quiet
-
-        svn rm ./tags/* --quiet # delete ALL old versions
-        #svn cp ./trunk ./tags/$v_new --quiet
-        cp -r ./../"$SLUG_FREE"/. ./tags/"$v_new"
-        svn add ./tags/* --quiet
-
-        svn ci -m "$v_new" --username "$SVN_USERNAME"
-    fi
-
-    # make release for pro plugin: call api
-    if [[ "$TYPE" == "PRO" && $RELEASE == true ]]; then
-        cd $SCRIPT_DIR
-        echo -n '{
-            "name": "'"$(grep "^ *\* Plugin Name:" ./deploy/build/"$SLUG_PRO".php | cut -d":" -f2- | xargs)"'",
-            "version": "'"$(grep "^Stable tag:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
-            "requires": "'"$(grep "^Requires at least:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
-            "tested": "'"$(grep "^Tested up to:" ./deploy/build/readme.txt | cut -d":" -f2- | xargs)"'",
-            "file": "'"$(base64 -w 0 ./deploy/_"$SLUG_PRO".zip)"'",
-            "icon": "'"$(base64 -w 0 ./deploy/build/assets/plugin/icon-128x128.png)"'"
-        }' > ./deploy/release.log
-        cat ./deploy/release.log | curl\
-            -L\
-            --insecure\
-            -H "Content-Type: application/json"\
-            -u "$API_USERNAME":"$API_PASSWORD"\
-            -X POST\
-            -d @-\
-            "$API_URL"
-    fi
-
-    # remove obsolete files
-    cd $SCRIPT_DIR
-    rm -rf ./deploy/build/
-
-done
-
+# remove obsolete files
+cd $SCRIPT_DIR
+rm -rf ./deploy/build/
 
 # git push + tag
 if [[ "$RELEASE" == true ]]; then
