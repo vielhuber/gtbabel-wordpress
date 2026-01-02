@@ -90,13 +90,6 @@ composer update --no-dev --no-autoloader
 sed -i -e "s/\"src\/functions.php\"//g" ./vendor/composer/installed.json
 composer dump-autoload
 
-# strip out pro code (disabled atm)
-#if [[ "$TYPE" == "FREE" ]]; then
-#    cd $SCRIPT_DIR
-#    cd ./deploy/build
-#    find . -type f -name "*.php" -print0 | xargs -0 sed -i -e '/\/\* @BEGINPRO \*\//,/\/\* @ENDPRO \*\//d'
-#fi
-
 # do the prefixing with php-scoper
 cd $SCRIPT_DIR
 cd ./deploy/build
