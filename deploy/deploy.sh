@@ -42,6 +42,10 @@ composer self-update --2
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SCRIPT_DIR="$( dirname "$SCRIPT_DIR" )"
 
+# remove obsolete files
+cd $SCRIPT_DIR
+rm -rf ./deploy/build/
+
 # determine next version
 if [[ "$RELEASE" == true ]]; then
     cd $SCRIPT_DIR
