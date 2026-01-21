@@ -75,10 +75,10 @@ unlink vendor
 
 # copy composer files to current folder (one level up) and run composer install
 cd $SCRIPT_DIR
-cp ./../core/composer.json ./deploy/build/composer.json
-cp -r ./../core/src ./deploy/build/src
-cp -r ./../core/components ./deploy/build/components
-cp ./../core/helpers.php ./deploy/build/helpers.php
+cp ./../gtbabel-core/composer.json ./deploy/build/composer.json
+cp -r ./../gtbabel-core/src ./deploy/build/src
+cp -r ./../gtbabel-core/components ./deploy/build/components
+cp ./../gtbabel-core/helpers.php ./deploy/build/helpers.php
 cd ./deploy/build/
 composer install --no-dev
 composer update --no-dev

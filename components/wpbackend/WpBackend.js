@@ -1,5 +1,5 @@
-import WysiwygEditor from './../../../core/components/wysiwygeditor/WysiwygEditor';
-import Tooltips from './../../../core/components/tooltips/Tooltips';
+import WysiwygEditor from './../../../gtbabel-core/components/wysiwygeditor/WysiwygEditor';
+import Tooltips from './../../../gtbabel-core/components/tooltips/Tooltips';
 
 export default class WpBackend {
     init() {
@@ -162,17 +162,15 @@ export default class WpBackend {
                         document.querySelector('.gtbabel__auto-translate') !== null &&
                         html.querySelector('.gtbabel__auto-translate') !== null
                     ) {
-                        document.querySelector('.gtbabel__auto-translate').innerHTML = html.querySelector(
-                            '.gtbabel__auto-translate'
-                        ).innerHTML;
+                        document.querySelector('.gtbabel__auto-translate').innerHTML =
+                            html.querySelector('.gtbabel__auto-translate').innerHTML;
                     }
                     if (
                         document.querySelector('.gtbabel__stats-log') !== null &&
                         html.querySelector('.gtbabel__stats-log') !== null
                     ) {
-                        document.querySelector('.gtbabel__stats-log').innerHTML = html.querySelector(
-                            '.gtbabel__stats-log'
-                        ).innerHTML;
+                        document.querySelector('.gtbabel__stats-log').innerHTML =
+                            html.querySelector('.gtbabel__stats-log').innerHTML;
                     }
                     if (html.querySelector('.gtbabel__auto-translate-next') !== null) {
                         this.fetchNextAutoTranslate(
@@ -253,9 +251,8 @@ export default class WpBackend {
                         document.querySelector('.gtbabel__auto-grab') !== null &&
                         html.querySelector('.gtbabel__auto-grab') !== null
                     ) {
-                        document.querySelector('.gtbabel__auto-grab').innerHTML = html.querySelector(
-                            '.gtbabel__auto-grab'
-                        ).innerHTML;
+                        document.querySelector('.gtbabel__auto-grab').innerHTML =
+                            html.querySelector('.gtbabel__auto-grab').innerHTML;
                     }
                     if (html.querySelector('.gtbabel__auto-grab-next') !== null) {
                         this.fetchNextAutoGrab(html.querySelector('.gtbabel__auto-grab-next').getAttribute('href'));
