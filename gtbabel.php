@@ -285,7 +285,7 @@ class GtbabelWordPress
                 if ($this->isFrontend()) {
                     $this->gtbabel->start();
                 }
-                if (isset($_GET['gtbabel_export'])) {
+                if (isset($_GET['gtbabel_export']) && current_user_can('gtbabel__edit_settings')) {
                     if ($_GET['gtbabel_export'] == 'po') {
                         $this->gtbabel->gettext->export();
                     }
