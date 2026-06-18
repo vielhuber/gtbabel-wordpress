@@ -9,7 +9,6 @@ export default defineConfig(({ mode }) => {
                     input: './components/wpbackend/script.js',
                     output: {
                         format: 'iife',
-                        inlineDynamicImports: true,
                         entryFileNames: 'bundle.js'
                     }
                 },
@@ -27,7 +26,6 @@ export default defineConfig(({ mode }) => {
                     input: './components/wpgutenberg/script.js',
                     output: {
                         format: 'iife',
-                        inlineDynamicImports: true,
                         entryFileNames: 'bundle.js'
                     }
                 },
