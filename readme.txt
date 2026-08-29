@@ -4,8 +4,8 @@ Tags: bilingual, language, multilingual, translate, translation
 Donate link: https://www.gtbabel.com
 Requires at least: 5.3.2
 Tested up to: 6.9
-Requires PHP: 7.2
-Stable tag: 6.8.8
+Requires PHP: 8.5
+Stable tag: 6.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ Gtbabel automatically translates your HTML/PHP pages – server sided!
 -   The tokens get dumped (if not available) into gettext, where they can be translated.
 
 == Installation ==
-1. Make sure you are using WordPress 5.3 or later and that your server is running PHP 7.2 or later (same requirement as WordPress itself).
+1. Make sure you are using WordPress 5.3 or later and that your server is running PHP 8.5 or later.
 
 2. If you tried other multilingual plugins, deactivate them before activating Gtbabel, otherwise, you may get unexpected results.
 
