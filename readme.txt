@@ -5,7 +5,7 @@ Donate link: https://www.gtbabel.com
 Requires at least: 5.3.2
 Tested up to: 6.9
 Requires PHP: 8.5
-Stable tag: 6.9.0
+Stable tag: 6.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -Eeuo pipefail
+
 SLUG="gtbabel"
 NAME="Gtbabel"
 SVN_USERNAME="gtbabel"
@@ -7,6 +9,7 @@ SVN_USERNAME="gtbabel"
 # parse command line arguments
 RELEASE=false
 DEBUG=false
+VERSION=""
 while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
@@ -18,8 +21,18 @@ while [[ $# -gt 0 ]]; do
         --debug)
         DEBUG=true
         ;;
+        # --version
+        --version)
+        shift
+        if [[ $# -eq 0 ]]; then
+            echo "Missing value for --version"
+            exit 1
+        fi
+        VERSION="$1"
+        ;;
         *)
         echo "Unknown option '$key'"
+        exit 1
         ;;
     esac
     shift
@@ -34,31 +47,36 @@ fi
 # output commands
 set -x
 
-# NOT NEEDED ANYMORE: switch to composer 1 (https://github.com/humbug/php-scoper/issues/452)
-composer self-update --2
-#composer self-update --1
-
 # save parent folder
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SCRIPT_DIR="$( dirname "$SCRIPT_DIR" )"
 
 # remove obsolete files
-cd $SCRIPT_DIR
-rm -rf ./deploy/build/
+cd "$SCRIPT_DIR"
+rm -rf ./deploy/build/ ./deploy/scoped/
+rm -f ./deploy/_"$SLUG".zip
 
 # determine next version
 if [[ "$RELEASE" == true ]]; then
-    cd $SCRIPT_DIR
-    v=`git describe --abbrev=0 --tags 2>/dev/null`
-    n=(${v//./ })
-    n1=${n[0]}
-    n2=${n[1]}
-    n3=${n[2]}
-    if [ -z "$n1" ] && [ -z "$n2" ] && [ -z "$n3" ]; then n1=1; n2=0; n3=0;else n3=$((n3+1)); fi
-    if [ "$n3" == "10" ]; then n3=0; n2=$((n2+1)); fi
-    if [ "$n2" == "10" ]; then n2=0; n1=$((n1+1)); fi
-    v_new="$n1.$n2.$n3"
-    echo $v_new
+    cd "$SCRIPT_DIR"
+    if [[ -n "$VERSION" ]]; then
+        v_new="$VERSION"
+    else
+        v=$(git describe --abbrev=0 --tags 2>/dev/null)
+        n=(${v//./ })
+        n1=${n[0]}
+        n2=${n[1]}
+        n3=${n[2]}
+        if [ -z "$n1" ] && [ -z "$n2" ] && [ -z "$n3" ]; then n1=1; n2=0; n3=0;else n3=$((n3+1)); fi
+        if [ "$n3" == "10" ]; then n3=0; n2=$((n2+1)); fi
+        if [ "$n2" == "10" ]; then n2=0; n1=$((n1+1)); fi
+        v_new="$n1.$n2.$n3"
+    fi
+    if [[ ! "$v_new" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Invalid version '$v_new'"
+        exit 1
+    fi
+    echo "$v_new"
 fi
 
 # increase version number in readme.txt and main php
@@ -68,45 +86,34 @@ if [[ "$RELEASE" == true ]]; then
 fi
 
 # copy all assets
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 mkdir ./deploy/build
-rsync -av --quiet --progress . ./deploy/build --exclude deploy
-
-# delete symlink that has been created when developing locally
-cd $SCRIPT_DIR
-cd ./deploy/build
-unlink vendor
+rsync -av --quiet --progress . ./deploy/build --exclude deploy --exclude .git --exclude node_modules --exclude vendor
 
 # copy composer files to current folder (one level up) and run composer install
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 cp ./../gtbabel-core/composer.json ./deploy/build/composer.json
 cp -r ./../gtbabel-core/src ./deploy/build/src
-cp -r ./../gtbabel-core/components ./deploy/build/components
+cp -r ./../gtbabel-core/components/. ./deploy/build/components/
 cp ./../gtbabel-core/helpers.php ./deploy/build/helpers.php
 cd ./deploy/build/
-composer install --no-dev
-composer update --no-dev
+composer update --no-dev --no-autoloader --prefer-dist --no-interaction
 
 # remove hotloaded functions by stringhelper (since in projects with gtbabel+stringhelper this fails!)
-rm -rf ./vendor
-composer install --no-dev --no-autoloader
-composer update --no-dev --no-autoloader
-sed -i -e "s/\"src\/functions.php\"//g" ./vendor/composer/installed.json
-composer dump-autoload
+sed -i -e '/"src\/functions.php"/d' ./vendor/composer/installed.json
+composer dump-autoload --no-dev --classmap-authoritative
 
 # do the prefixing with php-scoper
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 cd ./deploy/build
-wget https://github.com/humbug/php-scoper/releases/download/0.18.2/php-scoper.phar
-php ./php-scoper.phar add-prefix --config scoper.inc.php
-cd ./build
-composer dump-autoload
-sleep 3
+wget --quiet --show-progress --output-document php-scoper.phar https://github.com/humbug/php-scoper/releases/download/0.18.19/php-scoper.phar
+php ./php-scoper.phar add-prefix --config scoper.inc.php --output-dir ../scoped --force
+composer dump-autoload --working-dir=../scoped --no-dev --classmap-authoritative
 
 # rename and cleanup the build directory
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 cd ./deploy/build
-mv ./build/ ./"$SLUG"/
+mv ./../scoped/ ./"$SLUG"/
 rm -f ./"$SLUG"/composer.json
 rm -f ./"$SLUG"/composer.lock
 rm -f ./"$SLUG"/package.json
@@ -121,13 +128,13 @@ rm -rf ./"$SLUG"/logs/
 rm -rf ./"$SLUG"/node_modules/
 
 # make a zip
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 cd ./deploy/build
 zip --quiet -r ./../_"$SLUG".zip ./"$SLUG"
 
 # make release for plugin: add to subversion
 if [[ $RELEASE == true ]]; then
-    cd $SCRIPT_DIR
+    cd "$SCRIPT_DIR"
     cd ./deploy/build
     mkdir svn
     cd ./svn
@@ -137,34 +144,32 @@ if [[ $RELEASE == true ]]; then
     svn update --quiet
     sleep 2
 
-    svn rm ./trunk/* --quiet
+    find ./trunk -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} +
     cp -r ./../"$SLUG"/. ./trunk/
-    svn add ./trunk/* --quiet
+    svn add --force ./trunk/* --quiet
 
-    svn rm ./assets/* --quiet
+    find ./assets -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} +
     cp -r ./../"$SLUG"/assets/plugin/. ./assets/
-    svn add ./assets/* --quiet
+    svn add --force ./assets/* --quiet
 
-    svn rm ./tags/* --quiet # delete ALL old versions
+    find ./tags -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} + # delete ALL old versions
     #svn cp ./trunk ./tags/$v_new --quiet
     cp -r ./../"$SLUG"/. ./tags/"$v_new"
-    svn add ./tags/* --quiet
+    svn add --force ./tags/* --quiet
 
     svn ci -m "$v_new" --username "$SVN_USERNAME"
 fi
 
 # remove obsolete files
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 rm -rf ./deploy/build/
 
-# git push + tag
+# git commit + push + tag
 if [[ "$RELEASE" == true ]]; then
-    cd $SCRIPT_DIR
-    git add -A . && git commit -m "$v_new" && git push origin HEAD && git tag -a $v_new -m "$v_new" && git push --tags
+    echo "Run the following command to commit, push and tag version $v_new:"
+    printf 'cd "%s" && git add %s.php readme.txt deploy/deploy.sh && git commit -m "%s" -- %s.php readme.txt deploy/deploy.sh && git push origin HEAD && git tag -a "%s" -m "%s" && git push origin "%s"\n' \
+        "$SCRIPT_DIR" "$SLUG" "$v_new" "$SLUG" "$v_new" "$v_new" "$v_new"
 fi
-
-# switch back to composer 2
-composer self-update --2
 
 # debug
 #rm -rf ./deploy/build
