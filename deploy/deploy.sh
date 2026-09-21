@@ -149,18 +149,28 @@ if [[ $RELEASE == true ]]; then
         exit 1
     fi
 
-    find ./trunk -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} +
-    cp -r ./../"$SLUG"/. ./trunk/
-    svn add --force ./trunk/* --quiet
+    for directory in trunk assets; do
+        source="./../$SLUG/"
+        if [[ "$directory" == "assets" ]]; then
+            source+="assets/plugin/"
+        fi
+        rsync -a --delete --exclude=.svn "$source" "./$directory/"
+        svn status --xml "./$directory" |
+            php -r '
+                $status = simplexml_load_string(stream_get_contents(STDIN));
+                foreach ($status->xpath("//entry[wc-status/@item=\"missing\"]") as $entry) {
+                    echo $entry["path"], "\0";
+                }
+            ' |
+            while IFS= read -r -d '' path; do
+                svn rm --force --quiet -- "$path"
+            done
+        svn add --force --no-ignore --quiet "./$directory"
+    done
 
-    find ./assets -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} +
-    cp -r ./../"$SLUG"/assets/plugin/. ./assets/
-    svn add --force ./assets/* --quiet
+    svn copy ./trunk ./tags/"$v_new" --quiet
 
-    cp -r ./../"$SLUG"/. ./tags/"$v_new"
-    svn add ./tags/"$v_new" --quiet
-
-    svn ci -m "$v_new" --username "$SVN_USERNAME"
+    svn ci -m "$v_new" --username "$SVN_USERNAME" --config-option servers:global:http-timeout=600
 fi
 
 # remove obsolete files
