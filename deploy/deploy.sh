@@ -144,6 +144,11 @@ if [[ $RELEASE == true ]]; then
     svn update --quiet
     sleep 2
 
+    if [[ -e ./tags/"$v_new" ]]; then
+        echo "Version '$v_new' already exists."
+        exit 1
+    fi
+
     find ./trunk -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} +
     cp -r ./../"$SLUG"/. ./trunk/
     svn add --force ./trunk/* --quiet
@@ -152,10 +157,8 @@ if [[ $RELEASE == true ]]; then
     cp -r ./../"$SLUG"/assets/plugin/. ./assets/
     svn add --force ./assets/* --quiet
 
-    find ./tags -mindepth 1 -maxdepth 1 -exec svn rm --force --quiet {} + # delete ALL old versions
-    #svn cp ./trunk ./tags/$v_new --quiet
     cp -r ./../"$SLUG"/. ./tags/"$v_new"
-    svn add --force ./tags/* --quiet
+    svn add ./tags/"$v_new" --quiet
 
     svn ci -m "$v_new" --username "$SVN_USERNAME"
 fi
