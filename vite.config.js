@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 export default defineConfig(({ mode }) => {
     if (mode === 'wpbackend') {
         return {
+            resolve: {
+                dedupe: ['pell']
+            },
             build: {
                 outDir: './assets/build/wpbackend',
                 rollupOptions: {
